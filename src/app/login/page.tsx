@@ -42,16 +42,23 @@ export default function Login() {
     }
 
     console.log('✅ [Login] Login bem-sucedido, usuário:', data.user);
-    // Verifica a sessão
-    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+
+    const { data: sessionData, error: sessionError } =
+      await supabase.auth.getSession();
+
     if (sessionError) {
       console.error('❌ [Login] Erro ao obter sessão:', sessionError.message);
     } else {
-      console.log('🔍 [Login] Sessão ativa:', sessionData.session?.access_token ? 'Token presente' : 'Token ausente');
-      console.log('🔍 [Login] user_metadata:', JSON.stringify(data.user?.user_metadata));
+      console.log(
+        '🔍 [Login] Sessão ativa:',
+        sessionData.session?.access_token ? 'Token presente' : 'Token ausente'
+      );
+      console.log(
+        '🔍 [Login] user_metadata:',
+        JSON.stringify(data.user?.user_metadata)
+      );
     }
 
-    // Verifica os cookies no navegador
     const cookies = document.cookie;
     console.log('🍪 [Login] Cookies após login:', cookies);
 
@@ -60,107 +67,170 @@ export default function Login() {
   }
 
   return (
-    <main className="flex h-screen w-full font-lato">
+    <main className="flex min-h-screen w-full font-lato bg-[#f8fffb]">
       <Toaster
         position="top-center"
         toastOptions={{
           style: {
-            background: '#F0FFF4',
+            background: '#4ff388',
             color: '#15803D',
-            border: '1px solid #BBF7D0',
-            borderRadius: '8px',
+            border: '1px solid #4ff388',
+            borderRadius: '12px',
             padding: '12px',
-            boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.08)',
           },
         }}
       />
-      <div className="hidden w-[80%] flex-col bg-[radial-gradient(circle_at_center,#34D399_0%,#059669_60%)] p-8 md:flex">
-        <div className="w-full mb-8">
-          <nav className="flex items-center space-x-8">
-            <Link href="/">
-              <Image
-                src="/logo.svg"
-                alt="WorkshopLive Logo"
-                width={120}
-                height={40}
-                className="h-10 w-auto"
-              />
-            </Link>
-            <div className="flex space-x-4">
-              <Link href="/sobre">
-                <span className="text-[#E6FFFA] text-lg font-medium px-4 py-2 rounded-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15)_0%,transparent_70%)] hover:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.25)_0%,transparent_70%)] hover:text-[#A7F3D0] transition-all duration-300 ease-in-out">
-                  Sobre
-                </span>
-              </Link>
-              <Link href="/planos">
-                <span className="text-[#E6FFFA] text-lg font-medium px-4 py-2 rounded-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15)_0%,transparent_70%)] hover:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.25)_0%,transparent_70%)] hover:text-[#A7F3D0] transition-all duration-300 ease-in-out">
-                  Planos
-                </span>
-              </Link>
-              <Link href="/contato">
-                <span className="text-[#E6FFFA] text-lg font-medium px-4 py-2 rounded-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15)_0%,transparent_70%)] hover:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.25)_0%,transparent_70%)] hover:text-[#A7F3D0] transition-all duration-300 ease-in-out">
-                  Contato
-                </span>
-              </Link>
-              <Link href="/politica">
-                <span className="text-[#E6FFFA] text-lg font-medium px-4 py-2 rounded-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15)_0%,transparent_70%)] hover:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.25)_0%,transparent_70%)] hover:text-[#A7F3D0] transition-all duration-300 ease-in-out">
-                  Política
-                </span>
-              </Link>
+
+      {/* Lado esquerdo / Branding */}
+      <div className="relative hidden overflow-hidden md:flex md:w-[62%]">
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,#dfffea_0%,#baf9cf_30%,#86f2ae_65%,#55EF96_100%)]" />
+       
+        <div className="absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/18 blur-3xl" />
+
+        <div className="relative z-10 flex w-full flex-col p-8 lg:p-10">
+          <div className="mb-8">
+            <nav className="flex items-center justify-between gap-6">
+              <div className="flex items-center gap-8">
+                <Link href="/">
+                  <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl">
+                    <Image
+                      src="/logo.svg"
+                      alt="pera flow Logo"
+                      width={48}
+                      height={48}
+                      className="h-12 w-12 object-cover"
+                    />
+                  </div>
+                </Link>
+
+                <div className="hidden lg:flex items-center gap-2 rounded-full border border-white/35 bg-white/18 px-3 py-2 backdrop-blur-md shadow-[0_8px_30px_rgba(255,255,255,0.10)]">
+  <Link href="/sobre">
+    <span className="cursor-pointer rounded-full px-4 py-2 text-sm font-semibold text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.10)] transition hover:bg-white/20">
+      Sobre
+    </span>
+  </Link>
+  <Link href="/planos">
+    <span className="cursor-pointer rounded-full px-4 py-2 text-sm font-semibold text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.10)] transition hover:bg-white/20">
+      Planos
+    </span>
+  </Link>
+  <Link href="/contato">
+    <span className="cursor-pointer rounded-full px-4 py-2 text-sm font-semibold text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.10)] transition hover:bg-white/20">
+      Contato
+    </span>
+  </Link>
+  <Link href="/politica">
+    <span className="cursor-pointer rounded-full px-4 py-2 text-sm font-semibold text-white drop-shadow-[0_1px_8px_rgba(0,0,0,0.10)] transition hover:bg-white/20">
+      Política
+    </span>
+  </Link>
+</div>
+
+              </div>
+            </nav>
+          </div>
+
+          <div className="flex flex-1 items-center justify-center">
+            <div className="flex max-w-3xl flex-col items-center text-center">
+            
+      
+
+              <div className="relative flex items-center justify-center">
+                <div className="absolute z-0 h-[500px] w-[500px] rounded-full bg-white/20 blur-3xl" />
+                <Image
+                  src="/imagens/workshoplive.webp"
+                  alt="WorkshopLive Banner"
+                  width={840}
+                  height={560}
+                  className="relative z-10 w-full max-w-[680px] object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.10)]"
+                />
+              </div>
             </div>
-          </nav>
-        </div>
-        <div className="flex flex-col items-center justify-center flex-grow">
-          <Image
-            src="/imagens/workshoplive.webp"
-            alt="WorkshopLive Banner"
-            width={500}
-            height={300}
-            className="object-contain"
-          />
+          </div>
         </div>
       </div>
-      <div className="flex w-full flex-col items-center justify-center bg-white p-5 md:w-[20%]">
-        <h2 className="mb-6 text-2xl font-semibold">Bem vindo de Volta!</h2>
-        <form onSubmit={handleLogin} className="w-full">
-          <input
-            type="email"
-            placeholder="Coloque seu E-mail"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mb-4 w-full rounded-md border border-gray-300 p-2 text-base focus:outline-none focus:ring-2 focus:ring-[#0EA376]"
-            required
-          />
-          <div className="relative mb-4 w-full">
-            <input
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Coloque sua Senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-md border border-gray-300 p-2 text-base focus:outline-none focus:ring-2 focus:ring-[#0EA376]"
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-600 hover:text-[#077655]"
-            >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
+
+      {/* Lado direito / Login */}
+      <div className="flex w-full items-center justify-center bg-[radial-gradient(circle_at_top,#ffffff_0%,#f8fffb_45%,#eefcf4_100%)] px-5 py-8 md:w-[38%] md:px-8 lg:px-10">
+        <div className="w-full max-w-md rounded-[32px] border border-[#dff7e8] bg-white/90 p-7 shadow-[0_20px_60px_rgba(18,120,74,0.10)] backdrop-blur-xl sm:p-8">
+          <div className="mb-8 flex flex-col items-center text-center">
+            <div className="flex h-12 w-12 mb-5 items-center justify-center overflow-hidden rounded-xl">
+                    <Image
+                      src="/logo.svg"
+                      alt="pera flow Logo"
+                      width={48}
+                      height={48}
+                      className="h-12 w-12 object-cover"
+                    />
+                  </div>
+
+            <h2 className="text-3xl font-bold text-[#101010]">
+              Bem-vindo de volta
+            </h2>
+            <p className="mt-2 text-sm text-[#5e6a63]">
+              Entre na sua conta para continuar acessando a plataforma
+            </p>
           </div>
-          <button
-            type="submit"
-            className="rounded-full w-full bg-[#0BE76E] mb-4 p-2 text-white font-bold transition-all duration-300 hover:bg-[#0EA376] hover:scale-105 cursor-pointer"
-          >
-            Entrar
-          </button>
-        </form>
-        <p className="text-sm text-gray-600">
-          Não é assinante?{' '}
-          <Link href="/planos" className="text-[#077655] hover:text-[#0EA376]">
-            Assinar Agora!
-          </Link>
-        </p>
+
+          <form onSubmit={handleLogin} className="w-full">
+            <div className="mb-4">
+              <label className="mb-2 block text-sm font-medium text-[#1c1c1c]">
+                E-mail
+              </label>
+              <input
+                type="email"
+                placeholder="Coloque seu e-mail"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded-2xl border border-[#d8e6dd] bg-[#fbfffc] px-4 py-3 text-base text-[#111] outline-none transition-all placeholder:text-[#91a099] focus:border-[#55EF96] focus:ring-4 focus:ring-[#55EF96]/20"
+                required
+              />
+            </div>
+
+            <div className="mb-5">
+              <label className="mb-2 block text-sm font-medium text-[#1c1c1c]">
+                Senha
+              </label>
+              <div className="relative w-full">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Coloque sua senha"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full rounded-2xl border border-[#d8e6dd] bg-[#fbfffc] px-4 py-3 pr-12 text-base text-[#111] outline-none transition-all placeholder:text-[#91a099] focus:border-[#55EF96] focus:ring-4 focus:ring-[#55EF96]/20"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#6b7b72] transition hover:text-[#1f8b5b]"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="mb-4 w-full cursor-pointer rounded-2xl bg-[linear-gradient(135deg,#55EF96_0%,#28d975_100%)] p-3.5 text-base font-bold text-white shadow-[0_15px_30px_rgba(85,239,150,0.28)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_35px_rgba(85,239,150,0.35)]"
+            >
+              Entrar
+            </button>
+          </form>
+
+          <div className="mt-2 text-center">
+            <p className="text-sm text-[#607066]">
+              Não é assinante?{' '}
+              <Link
+                href="/planos"
+                className="font-semibold text-[#11a861] transition hover:text-[#0e8b51]"
+              >
+                Assinar agora
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
     </main>
   );

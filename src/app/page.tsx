@@ -72,8 +72,10 @@ export default function Home() {
         <nav className="flex items-center justify-between">
           <div className="flex items-center space-x-6">
             <Link href="/">
-              <img src="/logo.svg" alt="WorkshopLive Logo" className="h-10 w-auto" />
-            </Link>
+           <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl">
+             <img src="/logo.svg" alt="Pera Flow Logo" className="h-10 w-10 object-cover" />
+            </div>
+           </Link>
             <div className="flex space-x-4">
               <Link href="/sobre">
                 <span className="text-[#1e1e1e] hover:text-[#077655] cursor-pointer text-sm hidden md:inline-block">
@@ -335,8 +337,8 @@ export default function Home() {
 
       <footer className="w-full py-12 px-8 bg-[#181818]">
   <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-8">
-    <div className="w-full md:w-1/3 text-center md:text-left">
-      <img src="/logo.svg" alt="WorkshopLive Logo" className="h-10 w-auto mx-auto md:mx-0" />
+    <div className="w-full md:w-1/3 text-center md:text-left ">
+      <img src="/logo.svg" alt="WorkshopLive Logo" className="h-10 w-auto mx-auto md:mx-0 rounded-xl" />
       <p
         className="mt-4 text-gray-400"
         style={{ fontFamily: "Poppins, sans-serif", fontWeight: 400 }}
