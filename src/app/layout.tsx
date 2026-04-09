@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Pera Flow",
+  title: "PeraFlow",
   description: "faça lives enquanto você dorme",
 };
 
