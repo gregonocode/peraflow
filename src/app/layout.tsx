@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "workshoplive",
+  title: "Pera Flow",
   description: "faça lives enquanto você dorme",
 };
 

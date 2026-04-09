@@ -184,7 +184,7 @@ export default function Home() {
             <div className="p-6 rounded-2xl">
               <img
                 src="/imagens/workshoplive.webp"
-                alt="Workshop Live"
+                alt="Perafkow"
                 className="w-full h-auto rounded-lg"
               />
             </div>
@@ -310,7 +310,7 @@ export default function Home() {
             className="mt-4 text-lg text-gray-500"
             style={{ fontFamily: "Poppins, sans-serif", fontWeight: 400 }}
           >
-            Tire suas dúvidas sobre a Workshop Live e comece a vender mais!
+            Tire suas dúvidas sobre a Pera Flow e comece a vender mais!
           </p>
           <div className="mt-8 max-w-3xl mx-auto">
             <FaqItem
@@ -318,7 +318,7 @@ export default function Home() {
               answer="Você tem 7 dias para fazer o teste da ferramenta garantidos por lei."
             />
             <FaqItem
-              question="Preciso de conhecimentos técnicos para usar a Workshop Live?"
+              question="Preciso de conhecimentos técnicos para usar a Pera Flow?"
               answer="Não! Nossa plataforma é intuitiva e projetada para que qualquer pessoa possa configurar campanhas de Call Lives em poucos minutos, sem precisar de experiência técnica."
             />
             <FaqItem
@@ -432,7 +432,7 @@ export default function Home() {
         className="mt-4 text-gray-400"
         style={{ fontFamily: "Poppins, sans-serif", fontWeight: 400 }}
       >
-        contato@workshoplive.com.br
+        contato@peraflow.com.br
       </p>
     </div>
   </div>
