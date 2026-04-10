@@ -7,7 +7,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-const EVOLUTION_API = process.env.EVOLUTION_API_URL || 'http://209.126.6.223:8080';
+const EVOLUTION_API = process.env.EVOLUTION_API_URL!;
 const EVOLUTION_KEY = process.env.EVOLUTION_API_KEY!;
 
 // Função auxiliar para formatar logs
@@ -133,7 +133,7 @@ export async function POST(req: Request) {
     });
 
     // Configurar o webhook automaticamente
-    const webhookUrl = 'https://workshoplive.vercel.app/api/webhook/evolution';
+    const webhookUrl = 'https://peraflow-seven.vercel.app/api/webhook/evolution';
     const webhookRes = await fetch(`${EVOLUTION_API}/webhook/set/${nome}`, {
       method: 'POST',
       headers: {
