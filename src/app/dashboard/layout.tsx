@@ -41,7 +41,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               height={32}
               className="object-contain"
             />
-            <span className="text-[#E6FFFA] text-2xl font-bold">WorkshopLive</span>
+            <span className="text-[#E6FFFA] text-2xl font-bold">PeraFlow</span>
           </Link>
         </div>
         <nav className="space-y-4">
