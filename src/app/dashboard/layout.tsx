@@ -28,7 +28,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className="flex min-h-screen w-full font-lato bg-gray-100">
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 w-[20%] bg-[radial-gradient(circle_at_center,#34D399_0%,#059669_60%)] p-6 transform transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 w-[20%] bg-[radial-gradient(circle_at_center,#34D399_0%,#1ED468_60%)] p-6 transform transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -133,7 +133,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
         {/* Botão para abrir/fechar sidebar em dispositivos móveis */}
         <button
-          className="md:hidden fixed top-4 left-4 z-40 text-[#059669] p-2"
+          className="md:hidden fixed top-4 left-4 z-40 text-[#1ED468] p-2"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
           {isSidebarOpen ? '✕' : '☰'}
