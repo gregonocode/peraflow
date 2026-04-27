@@ -459,7 +459,7 @@ export default function TrackingPage() {
       <Toaster position="top-right" />
 
       <div className="mx-auto max-w-6xl">
-        <div className="mb-8 overflow-hidden rounded-3xl bg-[#181818] p-6 text-white shadow-sm sm:p-8">
+        <div className="mb-8 overflow-hidden rounded-3xl bg-[#0CE26C] p-6 text-white shadow-sm sm:p-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-emerald-100 ring-1 ring-white/10">
@@ -477,10 +477,7 @@ export default function TrackingPage() {
               </p>
             </div>
 
-            <div className="rounded-2xl bg-white/10 p-4 ring-1 ring-white/10">
-              <p className="text-xs text-gray-300">Pixels ativos nesta live</p>
-              <p className="mt-1 text-3xl font-bold">{totalActiveCount}</p>
-            </div>
+            
           </div>
         </div>
 
