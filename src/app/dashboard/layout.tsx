@@ -39,7 +39,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               alt="WorkshopLive Logo"
               width={32}
               height={32}
-              className="object-contain"
+              className="object-contain rounded-md"
             />
             <span className="text-[#E6FFFA] text-2xl font-bold">PeraFlow</span>
           </Link>
