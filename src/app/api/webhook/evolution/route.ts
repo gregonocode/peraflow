@@ -181,14 +181,32 @@ function extractUpsert(body: unknown): { instanceId?: string; instanceName?: str
   const instanceName =
     pickStr(b, 'instanceName') ??
     pickStr(b, 'instance') ??
-    pickStr(data, 'instanceName');
+    pickStr(data, 'instanceName') ??
+    pickStr(data, 'instance');
 
-  const maybe = (data as Dict).messages;
-  const messages: EvoUpsertItem[] = Array.isArray(maybe)
-    ? (maybe as unknown[]).map(normalizeUpsertItem)
-    : (typeof (data as Dict).message === 'object' && (data as Dict).message !== null)
-      ? [normalizeUpsertItem({ message: (data as Dict).message as EvoInnerMessage })]
-      : [];
+  const maybeMessages = data.messages;
+
+  let messages: EvoUpsertItem[] = [];
+
+  if (Array.isArray(maybeMessages)) {
+    messages = maybeMessages.map(normalizeUpsertItem);
+  } else if (typeof data.message === 'object' && data.message !== null) {
+    messages = [
+      normalizeUpsertItem({
+        key: data.key,
+        message: data.message,
+        remoteJid: (data.key as Dict | undefined)?.remoteJid,
+      }),
+    ];
+  } else if (typeof b.message === 'object' && b.message !== null) {
+    messages = [
+      normalizeUpsertItem({
+        key: b.key,
+        message: b.message,
+        remoteJid: (b.key as Dict | undefined)?.remoteJid,
+      }),
+    ];
+  }
 
   return { instanceId, instanceName, messages };
 }
@@ -275,10 +293,23 @@ export async function POST(req: Request) {
     const rawEvent = getEventFromBody(bodyUnknown);
     const event = normalizeEvent(rawEvent);
 
-    const apikey = req.headers.get('apikey') || req.headers.get('x-api-key');
+    const body = (bodyUnknown ?? {}) as Dict;
+
+    const apikey =
+      req.headers.get('apikey') ||
+      req.headers.get('x-api-key') ||
+      pickStr(body, 'apikey') ||
+      pickStr(body, 'apiKey') ||
+      pickStr(body, 'key');
+
     if (!apikey) {
-      logDebug('AUTH', 'Header apikey ausente');
-      return NextResponse.json({ error: 'Header apikey é obrigatório' }, { status: 401 });
+      console.error('[WEBHOOK][AUTH] apikey ausente', {
+        rawEvent,
+        event,
+        bodyKeys: Object.keys(body),
+      });
+
+      return NextResponse.json({ error: 'apikey é obrigatório' }, { status: 401 });
     }
 
     // 1) Resolve conexão pela hash (apikey)
@@ -376,6 +407,15 @@ export async function POST(req: Request) {
       const { instanceId, instanceName, messages } = extractUpsert(bodyUnknown);
       const d = extractBodyData(bodyUnknown);
 
+      console.log('[WEBHOOK][MESSAGES_UPSERT_PARSED]', {
+        instanceId,
+        instanceName,
+        messagesLen: messages.length,
+        bodyKeys: Object.keys((bodyUnknown ?? {}) as Dict),
+        dataKeys: Object.keys(d ?? {}),
+        event,
+      });
+
       logDebug('UPSERT_DEBUG', 'Resumo do upsert', {
         len: messages.length,
         firstRaw: messages[0] ? Object.keys(messages[0]) : [],
@@ -394,9 +434,23 @@ export async function POST(req: Request) {
 
         // remoteJid + texto + providerMsgId
         const remoteJid = extractRemoteJid(item, bodyUnknown);
-        if (!remoteJid) continue;
-        if (remoteJid.endsWith('@g.us')) continue; // ignora grupo
-        if (fromMe) continue; // só IN
+        if (!remoteJid) {
+          console.error('[WEBHOOK][SKIP_NO_REMOTE_JID]', {
+            item,
+            dataKeys: Object.keys(d ?? {}),
+          });
+          continue;
+        }
+
+        if (remoteJid.endsWith('@g.us')) {
+          console.log('[WEBHOOK][SKIP_GROUP]', { remoteJid });
+          continue;
+        }
+
+        if (fromMe) {
+          console.log('[WEBHOOK][SKIP_FROM_ME]', { remoteJid });
+          continue;
+        }
 
         const msisdn = normalizeMsisdn(remoteJid);
         const text = extractText(item.message);
