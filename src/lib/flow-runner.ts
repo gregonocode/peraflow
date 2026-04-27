@@ -657,20 +657,37 @@ export async function sendFirstNodeAndLog(args: {
     const now = new Date();
     const expires = new Date(now.getTime() + plan.aguarde.timeoutSeconds * 1000);
 
-    await supabaseAdmin.from('fluxo_esperas').insert({
-      status: 'pending',
-      created_at: now.toISOString(),
-      expires_at: expires.toISOString(),
-      fluxo_id: fluxoId,
-      node_id: plan.aguarde.nodeId,
-      remote_jid: msisdn, // armazenar normalizado
-      whatsapp_conexao_id: conexaoId,
-      user_id: conn?.user_id ?? null,
-      answered_target_id: plan.aguarde.answeredTargetId,
-      no_reply_target_id: plan.aguarde.noReplyTargetId,
-      followup_text: plan.aguarde.followupText ? { text: plan.aguarde.followupText } : null,
-      session_id: sessionId, // <- chave de sessão
-    });
+    const { data: existingWait } = await supabaseAdmin
+      .from('fluxo_esperas')
+      .select('id')
+      .eq('session_id', sessionId)
+      .eq('fluxo_id', fluxoId)
+      .eq('node_id', plan.aguarde.nodeId)
+      .eq('status', 'pending')
+      .maybeSingle();
+
+    if (!existingWait) {
+      await supabaseAdmin.from('fluxo_esperas').insert({
+        status: 'pending',
+        created_at: now.toISOString(),
+        expires_at: expires.toISOString(),
+        fluxo_id: fluxoId,
+        node_id: plan.aguarde.nodeId,
+        remote_jid: msisdn, // armazenar normalizado
+        whatsapp_conexao_id: conexaoId,
+        user_id: conn?.user_id ?? null,
+        answered_target_id: plan.aguarde.answeredTargetId,
+        no_reply_target_id: plan.aguarde.noReplyTargetId,
+        followup_text: plan.aguarde.followupText ? { text: plan.aguarde.followupText } : null,
+        session_id: sessionId, // <- chave de sessão
+      });
+    } else {
+      console.warn('[flow-runner] espera pending ja existe, ignorando duplicada', {
+        sessionId,
+        fluxoId,
+        nodeId: plan.aguarde.nodeId,
+      });
+    }
     // Obs.: o worker segue no_reply quando expirar; o followupText já foi enviado no próprio plano.
   }
 

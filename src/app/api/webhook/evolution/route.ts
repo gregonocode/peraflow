@@ -443,23 +443,58 @@ export async function POST(req: Request) {
           console.error('[WEBHOOK][INSERT_IN_ERROR]', insertError);
         }
 
-        // 3) Tentar claim atômico da ESPERA por session_id
-        //    - Só uma requisição consegue trocar status para 'answered'.
+        // 3) Tentar resolver ESPERA pendente por session_id
         const nowIso = new Date().toISOString();
-        const { data: answeredWait, error: updErr } = await supabaseAdmin
+        const { data: pendingWait, error: waitFindErr } = await supabaseAdmin
           .from('fluxo_esperas')
-          .update({ status: 'answered' })
+          .select('id, fluxo_id, answered_target_id, user_id, whatsapp_conexao_id, remote_jid')
           .eq('session_id', sessionId)
           .eq('status', 'pending')
           .gt('expires_at', nowIso)
-          .select('id, fluxo_id, answered_target_id, user_id, whatsapp_conexao_id, remote_jid')
+          .order('created_at', { ascending: false })
+          .limit(1)
           .maybeSingle();
 
-        if (updErr) {
-          console.error('[WEBHOOK][fluxo_esperas.update answered] error', updErr);
+        if (waitFindErr) {
+          console.error('[WEBHOOK][fluxo_esperas.find pending] error', waitFindErr);
         }
 
-        if (answeredWait?.id && answeredWait.answered_target_id) {
+        let answeredWait = null as typeof pendingWait;
+
+        if (pendingWait?.id) {
+          const { data: claimedWait, error: claimErr } = await supabaseAdmin
+            .from('fluxo_esperas')
+            .update({
+              status: 'answered',
+              answered_at: nowIso,
+            })
+            .eq('id', pendingWait.id)
+            .eq('status', 'pending')
+            .select('id, fluxo_id, answered_target_id, user_id, whatsapp_conexao_id, remote_jid')
+            .maybeSingle();
+
+          if (claimErr) {
+            console.error('[WEBHOOK][fluxo_esperas.claim answered] error', claimErr);
+          }
+
+          answeredWait = claimedWait;
+        }
+
+        if (pendingWait?.id && !answeredWait?.id) {
+          continue;
+        }
+
+        if (answeredWait?.id) {
+          if (!answeredWait.answered_target_id) {
+            console.warn('[WEBHOOK][WAIT_ANSWERED_WITHOUT_TARGET]', {
+              waitId: answeredWait.id,
+              fluxoId: answeredWait.fluxo_id,
+              sessionId,
+            });
+
+            continue;
+          }
+
           // ===== Carrega grafo e planeja a partir do answered_target_id =====
           const [{ data: nodes }, { data: edges }] = await Promise.all([
             supabaseAdmin
@@ -664,14 +699,19 @@ export async function POST(req: Request) {
         // 4) Primeiro contato → dispara fluxo inicial (compat)
         if (conn.fluxo_inicial_id) {
           // Heurística de "primeiro contato": contar inbound deste contato na conexão
-          const { count: prevIn } = await supabaseAdmin
+          const { count: prevIn, error: prevInError } = await supabaseAdmin
             .from('mensagens')
             .select('id', { count: 'exact', head: true })
             .eq('whatsapp_conexao_id', conn.id)
             .eq('de', msisdn)
             .eq('direcao', DIRECAO.IN);
 
-          if (!prevIn || prevIn === 1) {
+          if (prevInError) {
+            console.error('[WEBHOOK][COUNT_PREV_IN_ERROR]', prevInError);
+            continue;
+          }
+
+          if (prevIn === 1) {
             // mantém seu comportamento atual
             const res = await sendFirstNodeAndLog({
               conexaoId: conn.id,
