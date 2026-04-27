@@ -718,14 +718,18 @@ export async function POST(req: Request) {
         // 4) Primeiro contato → dispara fluxo inicial (compat)
         if (conn.fluxo_inicial_id) {
           // Heurística de "primeiro contato": contar inbound deste contato na conexão
-          const { count: prevIn } = await supabaseAdmin
-            .from('mensagens')
+          const { count: prevIn, error: prevInError } = await supabaseAdmin
+            .from('inbound_messages')
             .select('id', { count: 'exact', head: true })
             .eq('whatsapp_conexao_id', conn.id)
-            .eq('de', msisdn)
-            .eq('direcao', DIRECAO.IN);
+            .eq('remote_jid', msisdn);
 
-          if (!prevIn || prevIn === 1) {
+          if (prevInError) {
+            console.error('[WEBHOOK][COUNT_INBOUND_ERROR]', prevInError);
+            continue;
+          }
+
+          if (prevIn === 1) {
             // mantém seu comportamento atual
             const res = await sendFirstNodeAndLog({
               conexaoId: conn.id,
@@ -734,7 +738,7 @@ export async function POST(req: Request) {
               instanceId: instanceId || conn.token_sessao || null,
               instanceName: instanceName || conn.nome || null,
             });
-            logDebug('FLOW_DEBUG', 'Resultado do nó inicial', res);
+            console.log('[FLOW_DEBUG] Resultado do nó inicial', res);
           }
         }
       } // for
