@@ -1,3 +1,4 @@
+//src\app\dashboard\bootzap\page.tsx
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -6,8 +7,7 @@ import { createBrowserClient } from '@supabase/ssr';
 import { useRouter } from 'next/navigation';
 import dynamic from "next/dynamic";
 
-/* ✨ fundo holográfico */
-import '../../../styles/css/holografico.css';
+
 
 /* Ícones */
 import { UserRoundSearch, Cable, Trash2, ChevronUp } from 'lucide-react';
@@ -758,7 +758,7 @@ const excluirConexao = async (conn: Connection) => {
                       <Player
                         autoplay
                         loop
-                        src="/success.json"
+                        src="/Success.json"
                         style={{ height: "200px", width: "200px" }}
                       />
                     ) : qrCode ? (
