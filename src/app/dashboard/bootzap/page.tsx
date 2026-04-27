@@ -10,7 +10,14 @@ import dynamic from "next/dynamic";
 
 
 /* Ícones */
-import { UserRoundSearch, Cable, Trash2, ChevronUp } from 'lucide-react';
+import {
+  UserRoundSearch,
+  Cable,
+  Trash2,
+  ChevronUp,
+  CheckCircle2,
+  AlertTriangle,
+} from 'lucide-react';
 
 const Player = dynamic(
   () => import("@lottiefiles/react-lottie-player").then((mod) => mod.Player),
@@ -48,6 +55,26 @@ const statusInfo = (s?: string) => {
   if (v === 'pending')   return { label: 'Aguardando', dot: 'bg-amber-500',   chip: 'text-amber-700' };
   if (v === 'disconnected') return { label: 'Desconectado', dot: 'bg-gray-400', chip: 'text-gray-700' };
   return { label: 'Desconhecido', dot: 'bg-gray-300', chip: 'text-gray-700' };
+};
+
+const fluxoInicialInfo = (fluxoId?: string | null, fluxoNome?: string) => {
+  if (!fluxoId) {
+    return {
+      connected: false,
+      title: 'Nenhum fluxo inicial conectado',
+      description: 'Essa instância está conectada, mas ainda não vai iniciar nenhuma automação.',
+      wrapperClass: 'bg-amber-50 text-amber-800 ring-1 ring-amber-200',
+      iconClass: 'text-amber-600',
+    };
+  }
+
+  return {
+    connected: true,
+    title: 'Fluxo inicial conectado',
+    description: fluxoNome || 'Fluxo configurado para iniciar as automações.',
+    wrapperClass: 'bg-emerald-50 text-emerald-800 ring-1 ring-emerald-200',
+    iconClass: 'text-emerald-600',
+  };
 };
 
 export default function ConexoesPage() {
@@ -582,17 +609,18 @@ const excluirConexao = async (conn: Connection) => {
                   className="w-72 rounded-2xl bg-white ring-1 ring-black/5 shadow-sm overflow-hidden"
                 >
                   {/* Topo holográfico: Nome + badge Conectado */}
-                  <div className="h-28 holographic-bg relative flex items-center justify-center">
+                  <div className="h-28 relative flex items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_20%_20%,#dcfce7_0%,transparent_32%),radial-gradient(circle_at_80%_10%,#dbeafe_0%,transparent_30%),radial-gradient(circle_at_50%_90%,#fce7f3_0%,transparent_35%),linear-gradient(135deg,#f8fafc_0%,#eef2ff_45%,#ecfdf5_100%)]">
+                    <div className="absolute inset-0 bg-white/20" />
                     {(() => {
                      const info = statusInfo(conn.status);
                      return (
-                  <div className={`absolute top-3 left-3 inline-flex items-center gap-2 rounded-full bg-white/70 backdrop-blur px-2.5 py-1 ${info.chip} text-xs ring-1 ring-white/60`}>
+                  <div className={`absolute top-3 left-3 z-10 inline-flex items-center gap-2 rounded-full bg-white/70 backdrop-blur px-2.5 py-1 ${info.chip} text-xs ring-1 ring-white/60`}>
                   <span className={`h-2 w-2 rounded-full ${info.dot} animate-pulse`} />
                      {info.label}
                   </div>
                      );
                    })()}
-                    <h3 className="text-base font-semibold text-gray-800 text-center px-6 truncate">
+                    <h3 className="relative z-10 text-base font-semibold text-gray-800 text-center px-6 truncate">
                       {conn.nome}
                     </h3>
                   </div>
@@ -606,10 +634,36 @@ const excluirConexao = async (conn: Connection) => {
                       {conn.numero || 'Número não disponível'}
                     </p>
 
-                    {/* Info do fluxo atual */}
-                    <p className="mt-2 text-center text-sm text-gray-600">
-                      <span className="font-medium">Fluxo inicial:</span> {nomeDoFluxo(conn.fluxo_inicial_id)}
-                    </p>
+                    {/* Feedback visual do fluxo inicial */}
+                    {(() => {
+                      const fluxoNome = conn.fluxo_inicial_id
+                        ? nomeDoFluxo(conn.fluxo_inicial_id)
+                        : undefined;
+
+                      const fluxoInfo = fluxoInicialInfo(conn.fluxo_inicial_id, fluxoNome);
+
+                      return (
+                        <div className={`mt-3 rounded-xl px-3 py-2.5 ${fluxoInfo.wrapperClass}`}>
+                          <div className="flex items-start gap-2">
+                            {fluxoInfo.connected ? (
+                              <CheckCircle2 className={`mt-0.5 h-4 w-4 shrink-0 ${fluxoInfo.iconClass}`} />
+                            ) : (
+                              <AlertTriangle className={`mt-0.5 h-4 w-4 shrink-0 ${fluxoInfo.iconClass}`} />
+                            )}
+
+                            <div className="min-w-0">
+                              <p className="text-sm font-semibold leading-tight">
+                                {fluxoInfo.title}
+                              </p>
+
+                              <p className="mt-1 text-xs leading-snug opacity-90">
+                                {fluxoInfo.description}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()}
 
                     <ul className="mt-4 space-y-1.5">
                       <li>
