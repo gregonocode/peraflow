@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import WistiaPlayer from '../components/WistiaPlayer';
-import '../components/ui/shine.css';
 import { FaCheck, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { MessageSquareHeart, SquareActivity, Flame } from 'lucide-react';
 
@@ -335,18 +334,18 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="w-full py-12 px-8 bg-[#181818]">
-  <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-8">
-    <div className="w-full md:w-1/3 text-center md:text-left ">
+      <footer className="w-full bg-[#181818] px-6 py-12 sm:px-8">
+  <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-[1.4fr_1.6fr_1fr] lg:gap-12">
+    <div className="max-w-sm text-center md:text-left">
       <img src="/logo.svg" alt="WorkshopLive Logo" className="h-10 w-auto mx-auto md:mx-0 rounded-xl" />
       <p
-        className="mt-4 text-gray-400"
+        className="mt-5 text-sm leading-6 text-gray-400"
         style={{ fontFamily: "Poppins, sans-serif", fontWeight: 400 }}
       >
         Faça interações humanizadas como lives e calls ao vivo enquanto você dorme!
       </p>
     </div>
-    <div className="w-full md:w-1/3 text-center flex flex-col md:flex-row justify-center gap-8">
+    <div className="grid grid-cols-1 gap-8 text-center sm:grid-cols-3 md:text-left">
       <div>
         <h3
           className="text-lg font-semibold text-white"
@@ -423,7 +422,7 @@ export default function Home() {
         </div>
       </div>
     </div>
-    <div className="w-full md:w-1/3 text-center md:text-right">
+    <div className="text-center md:text-left">
       <h3
         className="text-lg font-semibold text-white"
         style={{ fontFamily: "Poppins, sans-serif", fontWeight: 600 }}
@@ -431,14 +430,14 @@ export default function Home() {
         Contatos
       </h3>
       <p
-        className="mt-4 text-gray-400"
+        className="mt-4 text-sm leading-6 text-gray-400"
         style={{ fontFamily: "Poppins, sans-serif", fontWeight: 400 }}
       >
         contato@peraflow.com.br
       </p>
     </div>
   </div>
-  <div className="mt-12 text-center">
+  <div className="mx-auto mt-10 max-w-7xl border-t border-white/10 pt-6 text-center">
     <p
       className="text-gray-400 text-sm"
       style={{ fontFamily: "Poppins, sans-serif", fontWeight: 400 }}

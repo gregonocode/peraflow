@@ -6,7 +6,6 @@ import type { User } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
 import { UserCircle, Settings, Mail, LogOut, Video } from 'lucide-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
-import '../../../components/ui/shine.css';
 
 // Inicializar Supabase
 const supabase = createBrowserClient(

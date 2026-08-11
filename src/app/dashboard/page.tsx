@@ -11,13 +11,14 @@ import {
   Title,
   Tooltip,
   Legend,
+  Filler,
   ChartOptions,
 } from 'chart.js';
 import { createBrowserClient } from '@supabase/ssr';
 import { useRouter } from 'next/navigation';
 
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 // Inicializar Supabase
 const supabase = createBrowserClient(
@@ -36,6 +37,10 @@ interface ChartData {
     fill: boolean;
     pointRadius: number;
     pointHoverRadius: number;
+    borderWidth: number;
+    pointBackgroundColor: string;
+    pointBorderColor: string;
+    pointBorderWidth: number;
   }[];
 }
 
@@ -188,11 +193,15 @@ export default function Dashboard() {
             label: 'Acessos à Live',
             data,
             borderColor: '#059669',
-            backgroundColor: '#34D399',
-            tension: 0.4,
-            fill: false,
-            pointRadius: 5,
-            pointHoverRadius: 8,
+            backgroundColor: 'rgba(16, 185, 129, 0.12)',
+            tension: 0.38,
+            fill: true,
+            pointRadius: 3,
+            pointHoverRadius: 6,
+            borderWidth: 3,
+            pointBackgroundColor: '#ffffff',
+            pointBorderColor: '#059669',
+            pointBorderWidth: 2,
           },
         ],
       });
@@ -204,17 +213,9 @@ export default function Dashboard() {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: {
-        position: 'top',
-        labels: {
-          color: '#1e1e1e',
-          font: {
-            size: 14,
-          },
-        },
-      },
+      legend: { display: false },
       title: {
-        display: true,
+        display: false,
         text: 'Acessos à Sua Live',
         color: '#1e1e1e',
         font: {
@@ -225,18 +226,22 @@ export default function Dashboard() {
         },
       },
       tooltip: {
-        backgroundColor: '#059669',
-        titleColor: '#E6FFFA',
-        bodyColor: '#E6FFFA',
+        backgroundColor: '#111827',
+        titleColor: '#ffffff',
+        bodyColor: '#d1fae5',
+        displayColors: false,
+        padding: 12,
+        cornerRadius: 8,
       },
     },
     scales: {
       x: {
         ticks: {
-          color: '#1e1e1e',
+          color: '#6b7280',
           font: {
             size: 12,
           },
+          maxRotation: 0,
         },
         grid: {
           display: false,
@@ -244,21 +249,25 @@ export default function Dashboard() {
       },
       y: {
         ticks: {
-          color: '#1e1e1e',
+          color: '#6b7280',
           font: {
             size: 12,
           },
+          padding: 12,
+          precision: 0,
         },
         grid: {
-          color: '#e5e7eb',
+          color: '#f0fdf4',
+          tickLength: 0,
         },
+        border: { display: false },
         beginAtZero: true,
       },
     },
   };
 
   return (
-    <div className="font-lato">
+    <div className="mx-auto w-full max-w-6xl font-lato">
       <h1 className="text-3xl font-bold text-[#1e1e1e] mb-6">Bem-vindo ao seu Dashboard</h1>
       <p className="text-gray-600 mb-4">
         Acompanhe os acessos à sua live e gerencie sua estratégia!
@@ -278,50 +287,54 @@ export default function Dashboard() {
 </div>
 
 
-      <div className="flex space-x-4 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow-md flex-1">
+      <div className="mb-8 grid max-w-3xl grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
           <h3 className="text-lg font-semibold text-[#1e1e1e] mb-2">Acessos Hoje</h3>
           <p className="text-2xl font-bold text-[#059669]">{accessToday}</p>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-md flex-1">
+        <div className="rounded-2xl border border-emerald-100 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
           <h3 className="text-lg font-semibold text-[#1e1e1e] mb-2">Novos Acessos</h3>
           <p className="text-2xl font-bold text-[#059669]">{newAccess}</p>
         </div>
       </div>
-      <div className="bg-white p-6 rounded-lg shadow-md w-full h-[400px]">
-        <div className="flex space-x-4 mb-6">
+      <div className="h-[460px] w-full rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:h-[420px] sm:p-6">
+        <div className="mb-4">
+          <h2 className="text-lg font-semibold text-[#1e1e1e]">Acessos à sua live</h2>
+          <p className="mt-1 text-sm text-gray-500">Acompanhe a evolução dos acessos no período selecionado.</p>
+        </div>
+        <div className="mb-5 flex flex-wrap gap-2 sm:gap-3">
           <button
-            className={`px-4 py-2 rounded-md text-sm font-medium ${
+            className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
               filter === 'daily'
                 ? 'bg-[#059669] text-white'
-                : 'bg-gray-200 text-[#1e1e1e] hover:bg-gray-300'
+                : 'bg-emerald-50 text-[#047857] hover:bg-emerald-100'
             }`}
             onClick={() => setFilter('daily')}
           >
             Diário
           </button>
           <button
-            className={`px-4 py-2 rounded-md text-sm font-medium ${
+            className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
               filter === '7days'
                 ? 'bg-[#059669] text-white'
-                : 'bg-gray-200 text-[#1e1e1e] hover:bg-gray-300'
+                : 'bg-emerald-50 text-[#047857] hover:bg-emerald-100'
             }`}
             onClick={() => setFilter('7days')}
           >
             Últimos 7 Dias
           </button>
           <button
-            className={`px-4 py-2 rounded-md text-sm font-medium ${
+            className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
               filter === '30days'
                 ? 'bg-[#059669] text-white'
-                : 'bg-gray-200 text-[#1e1e1e] hover:bg-gray-300'
+                : 'bg-emerald-50 text-[#047857] hover:bg-emerald-100'
             }`}
             onClick={() => setFilter('30days')}
           >
             Últimos 30 Dias
           </button>
         </div>
-        <div className="h-[300px]">
+        <div className="h-[275px] sm:h-[270px]">
           <Line data={chartData} options={options} />
         </div>
       </div>

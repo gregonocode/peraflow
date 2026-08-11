@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { FaCheck } from 'react-icons/fa';
-import '../../components/ui/shine.css';
 
 export default function Planos() {
   return (

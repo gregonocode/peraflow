@@ -3,12 +3,19 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { createBrowserClient } from '@supabase/ssr';
 import { Home, Video, User, Settings, Film, BookOpen, CodeXml, BotMessageSquare } from 'lucide-react';
 import { ExclamationTriangleIcon, XMarkIcon } from '@heroicons/react/24/outline';
+
+const supabase = createBrowserClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isWarningVisible, setIsWarningVisible] = useState(false);
+  const [hasPremiumPlan, setHasPremiumPlan] = useState(false);
 
   useEffect(() => {
     // Verifica se o aviso deve ser exibido com base no localStorage
@@ -16,6 +23,26 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     if (!hasClosedWarning) {
       setIsWarningVisible(true);
     }
+
+    async function loadPlan() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) return;
+
+      const { data: subscription } = await supabase
+        .from('subscriptions')
+        .select('plan_type')
+        .eq('user_id', user.id)
+        .eq('status', 'active')
+        .maybeSingle();
+
+      const planType = subscription?.plan_type?.toLowerCase();
+      setHasPremiumPlan(planType === 'premium' || planType === 'pro');
+    }
+
+    loadPlan();
   }, []);
 
   const handleCloseWarning = () => {
@@ -28,7 +55,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <div className="flex min-h-screen w-full font-lato bg-gray-100">
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 w-[20%] bg-[radial-gradient(circle_at_center,#34D399_0%,#1AC265_60%)] p-6 transform transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 w-64 bg-[radial-gradient(circle_at_center,#34D399_0%,#1AC265_60%)] p-6 transform transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -69,17 +96,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               <span>Trackeamento</span>
             </div>
           </Link>
-          <Link href="/dashboard/bootzap">
-            <div className="flex items-center space-x-3 text-[#E6FFFA] hover:text-[#A7F3D0] cursor-pointer px-4 py-2 rounded-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15)_0%,transparent_70%)] hover:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.25)_0%,transparent_70%)] transition-all">
-              <BotMessageSquare size={20} />
-              <span className="flex items-center space-x-2">
-                <span>Bootzap</span>
-                <span className="bg-[#41E2AB] text-white text-xs font-medium px-2 py-0.5 rounded-full border border-white transform scale-90">
-                  Novo
+          {hasPremiumPlan && (
+            <Link href="/dashboard/bootzap">
+              <div className="flex items-center space-x-3 text-[#E6FFFA] hover:text-[#A7F3D0] cursor-pointer px-4 py-2 rounded-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15)_0%,transparent_70%)] hover:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.25)_0%,transparent_70%)] transition-all">
+                <BotMessageSquare size={20} />
+                <span className="flex items-center space-x-2">
+                  <span>Bootzap</span>
+                  <span className="bg-[#41E2AB] text-white text-xs font-medium px-2 py-0.5 rounded-full border border-white transform scale-90">
+                    Novo
+                  </span>
                 </span>
-              </span>
-            </div>
-          </Link>
+              </div>
+            </Link>
+          )}
           <Link href="/dashboard/tutorial">
             <div className="flex items-center space-x-3 text-[#E6FFFA] hover:text-[#A7F3D0] cursor-pointer px-4 py-2 rounded-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.15)_0%,transparent_70%)] hover:bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.25)_0%,transparent_70%)] transition-all">
               <BookOpen size={20} />
@@ -105,7 +134,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <div className="flex-1 flex flex-col">
         {/* Barra de aviso */}
         {isWarningVisible && (
-          <div className="fixed top-0 left-[20%] right-0 bg-yellow-50 p-4 z-30 md:left-[20%] md:right-0 max-w-[80%]">
+          <div className="fixed top-0 left-0 right-0 z-30 bg-yellow-50 p-4 md:left-64">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <ExclamationTriangleIcon className="h-5 w-5 text-yellow-600" aria-hidden="true" />

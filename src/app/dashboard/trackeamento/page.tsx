@@ -459,19 +459,19 @@ export default function TrackingPage() {
       <Toaster position="top-right" />
 
       <div className="mx-auto max-w-6xl">
-        <div className="mb-8 overflow-hidden rounded-3xl bg-[#0CE26C] p-6 text-white shadow-sm sm:p-8">
+        <div className="mb-8 overflow-hidden rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-emerald-100 ring-1 ring-white/10">
-                <Radio className="h-3.5 w-3.5" />
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600 ring-1 ring-gray-200">
+                <Radio className="h-3.5 w-3.5 text-[#059669]" />
                 Rastreamento das lives
               </div>
 
-              <h1 className="text-2xl font-bold sm:text-3xl">
+              <h1 className="text-2xl font-bold text-[#181818] sm:text-3xl">
                 Configuração de Rastreamento
               </h1>
 
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-300 sm:text-base">
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-gray-600 sm:text-base">
                 Configure Facebook Pixel, TikTok Pixel e Google Tracking para medir acessos,
                 campanhas e conversões das suas lives.
               </p>

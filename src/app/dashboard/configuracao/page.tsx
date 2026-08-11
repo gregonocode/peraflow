@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { Settings, Mail, LogOut, Video, UserCircle, Edit } from 'lucide-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import toast, { Toaster } from 'react-hot-toast';
-import '../../../components/ui/shine.css';
 
 // Inicializar Supabase
 const supabase = createBrowserClient(
